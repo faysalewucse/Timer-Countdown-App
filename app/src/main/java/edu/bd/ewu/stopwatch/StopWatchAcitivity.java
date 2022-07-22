@@ -19,10 +19,11 @@ import android.widget.TextView;
 public class StopWatchAcitivity extends AppCompatActivity {
 
     TextView hour_view, minute_view, seconds_view, reset_btn, pauseStart_btn, stop_btn, hidden_text;
-    int second = 0, reset =0, pause = 0, stop =0;
-    int broadCast_sec = 0;
+    int reset =0, pause = 0, stop =0;
+    int broadCast_sec;
     public static final String SECOND = "second";
     private MyReceiver mReceiver;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class StopWatchAcitivity extends AppCompatActivity {
                 if(pause == 1){
                     pause = 0;
                     i.putExtra("SECOND", hidden_text.getText().toString());
+                    i.putExtra("SERVICE_NAME", "stopwatch");
                     startService(i);
                     LocalBroadcastManager.getInstance(getApplicationContext())
                             .registerReceiver(mReceiver, new IntentFilter(MyService.SERVICE_MESSAGE));
@@ -61,6 +63,7 @@ public class StopWatchAcitivity extends AppCompatActivity {
                 else if(stop == 1 || reset == 1){
                     stop = 0;
                     i.putExtra("SECOND", "0");
+                    i.putExtra("SERVICE_NAME", "stopwatch");
                     startService(i);
                     LocalBroadcastManager.getInstance(getApplicationContext())
                             .registerReceiver(mReceiver, new IntentFilter(MyService.SERVICE_MESSAGE));
@@ -97,13 +100,10 @@ public class StopWatchAcitivity extends AppCompatActivity {
         if(!foregroundServiceRunning()){
             Intent i = new Intent(getApplicationContext(), MyService.class);
             i.putExtra("SECOND", seconds_view.getText().toString());
+            i.putExtra("SERVICE_NAME", "stopwatch");
             startService(i);
             LocalBroadcastManager.getInstance(getApplicationContext())
                     .registerReceiver(mReceiver, new IntentFilter(MyService.SERVICE_MESSAGE));
-        }
-        else{
-            System.out.println("HAHAHAHAH"+broadCast_sec);
-            setTime(seconds_view, minute_view, hour_view, getSecond());
         }
     }
 
@@ -111,19 +111,10 @@ public class StopWatchAcitivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             broadCast_sec = Integer.parseInt(intent.getStringExtra(SECOND));
-            Log.d("second", "onReceive: "+ broadCast_sec);
-            setSecond(broadCast_sec);
+            //Log.d("second", "onReceive: "+ broadCast_sec);
             hidden_text.setText(intent.getStringExtra(SECOND));
             setTime(seconds_view, minute_view, hour_view, broadCast_sec);
         }
-    }
-
-    public int getSecond() {
-        return second;
-    }
-
-    public void setSecond(int second) {
-        this.second = second;
     }
 
     public boolean foregroundServiceRunning(){
@@ -138,6 +129,7 @@ public class StopWatchAcitivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void setTime(TextView seconds_view, TextView minute_view, TextView hour_view, int second){
+        Log.d("second", "setTime: "+second);
         if(second%60 < 10) seconds_view.setText("0"+ second % 60);
         else seconds_view.setText(String.valueOf(second % 60));
         if((second % 3600) / 60 < 10) minute_view.setText("0"+ (second % 3600) / 60);

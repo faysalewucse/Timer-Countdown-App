@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Timer"
+        android:text="CountDown Timer"
         android:gravity="center"
         android:textSize="20dp"
         android:padding="5dp"

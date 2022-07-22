@@ -4,6 +4,7 @@
     package="edu.bd.ewu.stopwatch">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -19,10 +20,6 @@
             android:name=".CountdownActivity"
             android:exported="false" />
 
-        <service
-            android:name=".TestService"
-            android:enabled="true"
-            android:exported="true" />
         <service
             android:name=".MyService"
             android:enabled="true"
@@ -40,6 +37,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
